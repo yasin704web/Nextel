@@ -1,20 +1,16 @@
 import asyncio
-from handlers.start import router as start_router
-from handlers.menu import router as menu_router
-from handlers.sources import router as sources_router
-from handlers.admin import router as admin_router
-from handlers.spin import router as spin_router
 
 from aiogram import Bot, Dispatcher
 
 from config import BOT_TOKEN
 from database import init_db
 
-from handlers_start import router as start_router
-from handlers_menu import router as menu_router
-from handlers_sources import router as sources_router
-from handlers_admin import router as admin_router
-from handlers_spin import router as spin_router
+from handlers.start import router as start_router
+from handlers.menu import router as menu_router
+from handlers.sources import router as sources_router
+from handlers.admin import router as admin_router
+from handlers.spin import router as spin_router
+
 
 
 async def main():

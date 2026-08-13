@@ -1,4 +1,9 @@
 import asyncio
+from handlers.start import router as start_router
+from handlers.menu import router as menu_router
+from handlers.sources import router as sources_router
+from handlers.admin import router as admin_router
+from handlers.spin import router as spin_router
 
 from aiogram import Bot, Dispatcher
 

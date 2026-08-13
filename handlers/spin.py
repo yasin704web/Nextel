@@ -1,21 +1,25 @@
+import random
+from datetime import date
+
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
-from datetime import date
-import random
-
 from database import (
-    get_coins,
-    add_coin,
     get_last_spin,
-    update_last_spin
+    update_last_spin,
+    add_coin,
+    get_coins
 )
 
-from keyboards import back_keyboard
+from keyboards import back_button
 
 
 router = Router()
 
+
+# =========================
+# 🎡 گردونه شانس
+# =========================
 
 @router.callback_query(F.data == "spin")
 async def spin_handler(callback: CallbackQuery):
@@ -24,16 +28,30 @@ async def spin_handler(callback: CallbackQuery):
 
     today = date.today().isoformat()
 
-    # بررسی اینکه کاربر امروز قبلاً گردونه زده یا نه
+    # بررسی استفاده قبلی در امروز
     last_spin = await get_last_spin(user_id)
 
     if last_spin == today:
 
-        await callback.answer(
-            "⏳ امروز قبلاً گردونه را امتحان کرده‌ای!\n"
-            "فردا دوباره شانست را امتحان کن 🏆",
-            show_alert=True
+        coins = await get_coins(user_id)
+
+        text = f"""
+🎡 گردونه شانس Nextel
+
+⚠️ شما امروز قبلاً از گردونه استفاده کرده‌اید.
+
+🪙 موجودی فعلی شما:
+{coins} سکه
+
+⏳ فردا دوباره می‌توانید شانس خود را امتحان کنید.
+"""
+
+        await callback.message.edit_text(
+            text,
+            reply_markup=back_button()
         )
+
+        await callback.answer()
 
         return
 
@@ -43,45 +61,57 @@ async def spin_handler(callback: CallbackQuery):
         today
     )
 
-    # احتمال برد
-    # 20 درصد برنده
-    won = random.random() < 0.20
+    # =========================
+    # نتیجه گردونه
+    # =========================
+
+    # 30 درصد شانس دریافت سکه
+    won = random.random() < 0.30
 
     if won:
 
-        # اضافه کردن یک سکه
-        await add_coin(user_id)
+        await add_coin(
+            user_id,
+            1
+        )
 
         coins = await get_coins(user_id)
 
         text = f"""
 🎉 تبریک قهرمان!
 
+🎡 گردونه شانس
+
 🪙 امروز یک سکه گرفتید!
 
-━━━━━━━━━━━━━━━━━━
+✨ شانس با شما یار بود.
 
-💰 موجودی فعلی شما:
-{coins} 🪙
+💰 موجودی فعلی:
+{coins} سکه
 
-با سکه‌ها می‌توانید سورس‌های VIP تهیه کنید. 👑
-
-🚀 موفق باشید!
+🚀 از سکه‌هایتان برای تهیه سورس‌های Nextel استفاده کنید.
 """
 
     else:
 
-        text = """
+        coins = await get_coins(user_id)
+
+        text = f"""
+🎡 گردونه شانس
+
 😅 این بار شانسی در نظر گرفته نشد!
 
-ولی تلاش کن قهرمان 🏆
+ولی ناامید نشو قهرمان 💪
 
-⏳ فردا دوباره می‌تونی شانس خودت رو امتحان کنی.
+🍀 فردا دوباره امتحان کن.
+
+💰 موجودی فعلی:
+{coins} سکه
 """
 
     await callback.message.edit_text(
         text,
-        reply_markup=back_keyboard()
+        reply_markup=back_button()
     )
 
     await callback.answer()

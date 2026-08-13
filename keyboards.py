@@ -2,6 +2,40 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 # =========================
+# عضویت اجباری
+# =========================
+
+def join_keyboard():
+
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+
+            [
+                InlineKeyboardButton(
+                    text="📢 عضویت در کانال 1",
+                    url="https://t.me/SaaSbot_io"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="👤 عضویت در کانال 2",
+                    url="https://t.me/likethedeath"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="✅ تأیید عضویت",
+                    callback_data="check_membership"
+                )
+            ]
+
+        ]
+    )
+
+
+# =========================
 # منوی اصلی
 # =========================
 
@@ -59,6 +93,15 @@ def main_menu():
 
 
 # =========================
+# سازگاری با start.py قدیمی
+# =========================
+
+def main_keyboard():
+
+    return main_menu()
+
+
+# =========================
 # دکمه برگشت
 # =========================
 
@@ -66,12 +109,14 @@ def back_button():
 
     return InlineKeyboardMarkup(
         inline_keyboard=[
+
             [
                 InlineKeyboardButton(
                     text="🔙 بازگشت",
                     callback_data="back_main"
                 )
             ]
+
         ]
     )
 
@@ -104,7 +149,7 @@ def buy_source(source_id):
 
 
 # =========================
-# پنل مدیریت
+# پنل ادمین
 # =========================
 
 def admin_menu():
@@ -175,4 +220,4 @@ def admin_cancel():
             ]
 
         ]
-    )
+                )

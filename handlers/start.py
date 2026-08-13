@@ -15,8 +15,8 @@ router = Router()
 async def check_membership(bot, user_id):
 
     channels = [
-        "@YOUR_CHANNEL_1",
-        "@YOUR_CHANNEL_2"
+        "@SaaSbot_io",
+        "@likethedeath"
     ]
 
     for channel in channels:

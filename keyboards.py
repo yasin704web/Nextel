@@ -1,53 +1,37 @@
-from aiogram.types import (
-    InlineKeyboardMarkup,
-    InlineKeyboardButton
-)
-
-from config import CHANNEL_1_URL, CHANNEL_2_URL
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
-def join_keyboard():
+# =========================
+# منوی اصلی
+# =========================
 
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="📢 عضویت در کانال",
-                    url=CHANNEL_1_URL
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="✅ بررسی عضویت",
-                    callback_data="check_join"
-                )
-            ]
-        ]
-    )
-
-
-def main_keyboard():
+def main_menu():
 
     return InlineKeyboardMarkup(
         inline_keyboard=[
+
             [
                 InlineKeyboardButton(
                     text="🏆 برترین سورس‌ها",
                     callback_data="top_sources"
-                )
-            ],
-            [
+                ),
                 InlineKeyboardButton(
                     text="👑 سورس VIP",
                     callback_data="vip_sources"
                 )
             ],
+
             [
+                InlineKeyboardButton(
+                    text="👤 حساب من",
+                    callback_data="my_account"
+                ),
                 InlineKeyboardButton(
                     text="🎡 گردونه شانس",
                     callback_data="spin"
                 )
             ],
+
             [
                 InlineKeyboardButton(
                     text="🛠️ پشتیبانی",
@@ -55,44 +39,30 @@ def main_keyboard():
                 ),
                 InlineKeyboardButton(
                     text="🤖 راهنما",
-                    callback_data="guide"
+                    callback_data="help"
                 )
             ],
+
             [
                 InlineKeyboardButton(
-                    text="📢 کانال ۱",
-                    url=CHANNEL_1_URL
+                    text="📢 کانال 1",
+                    callback_data="channel_1"
                 ),
                 InlineKeyboardButton(
-                    text="👤 کانال ۲",
-                    url=CHANNEL_2_URL
+                    text="👤 کانال 2",
+                    callback_data="channel_2"
                 )
             ]
+
         ]
     )
 
 
-def admin_keyboard():
+# =========================
+# دکمه برگشت
+# =========================
 
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="➕ اضافه کردن سورس",
-                    callback_data="admin_add_source"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="📋 لیست برترین سورس‌ها",
-                    callback_data="top_sources"
-                )
-            ]
-        ]
-    )
-
-
-def back_keyboard():
+def back_button():
 
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -102,5 +72,107 @@ def back_keyboard():
                     callback_data="back_main"
                 )
             ]
+        ]
+    )
+
+
+# =========================
+# خرید سورس
+# =========================
+
+def buy_source(source_id):
+
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+
+            [
+                InlineKeyboardButton(
+                    text="🛒 خرید سورس",
+                    callback_data=f"buy_source:{source_id}"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="🔙 بازگشت",
+                    callback_data="back_sources"
+                )
+            ]
+
+        ]
+    )
+
+
+# =========================
+# پنل مدیریت
+# =========================
+
+def admin_menu():
+
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+
+            [
+                InlineKeyboardButton(
+                    text="➕ اضافه کردن سورس",
+                    callback_data="admin_add_source"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="👑 اضافه کردن سورس VIP",
+                    callback_data="admin_add_vip"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="📋 لیست برترین سورس‌ها",
+                    callback_data="admin_top_list"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="👑 لیست سورس‌های VIP",
+                    callback_data="admin_vip_list"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="🗑 حذف سورس",
+                    callback_data="admin_delete_source"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="📊 آمار ربات",
+                    callback_data="admin_stats"
+                )
+            ]
+
+        ]
+    )
+
+
+# =========================
+# لغو عملیات ادمین
+# =========================
+
+def admin_cancel():
+
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+
+            [
+                InlineKeyboardButton(
+                    text="❌ لغو",
+                    callback_data="admin_cancel"
+                )
+            ]
+
         ]
     )

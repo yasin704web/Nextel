@@ -1,116 +1,111 @@
-from aiogram import Router, F, Bot
-from aiogram.filters import CommandStart
+from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 
-from config import REQUIRED_CHANNEL
-from database import add_user
 from keyboards import join_keyboard, main_keyboard
+from database import add_user
 
 
 router = Router()
-
-
-WELCOME_TEXT = """
-سلام من Nextel هستم 🤖
-
-من به شما سورس‌های برنامه‌نویسی، قالب سایت و خدمات دیگری می‌دهم.
-
-ممنون که با من همراه شدید ❤️
-
-لطفاً یکی از دکمه‌های زیر را فشار دهید.
-"""
-
-
-async def is_member(bot: Bot, user_id: int) -> bool:
-    """
-    بررسی می‌کند کاربر عضو کانال اجباری هست یا خیر.
-    """
-
-    try:
-
-        member = await bot.get_chat_member(
-            chat_id=REQUIRED_CHANNEL,
-            user_id=user_id
-        )
-
-        return member.status in (
-            "member",
-            "administrator",
-            "creator"
-        )
-
-    except Exception:
-
-        return False
-
-
-# =========================
-# /start
-# =========================
-
-@router.message(CommandStart())
-async def start_handler(
-    message: Message,
-    bot: Bot
-):
-
-    user = message.from_user
-
-    # ذخیره کاربر در دیتابیس
-    await add_user(
-        user_id=user.id,
-        username=user.username
-    )
-
-    # بررسی عضویت
-    if not await is_member(bot, user.id):
-
-        await message.answer(
-            "👋 به Nextel خوش آمدید!\n\n"
-            "برای استفاده از ربات ابتدا باید در کانال ما عضو شوید 👇",
-            reply_markup=join_keyboard()
-        )
-
-        return
-
-    # اگر قبلاً عضو بوده
-    await message.answer(
-        WELCOME_TEXT,
-        reply_markup=main_keyboard()
-    )
 
 
 # =========================
 # بررسی عضویت
 # =========================
 
-@router.callback_query(F.data == "check_join")
-async def check_join_handler(
-    callback: CallbackQuery,
-    bot: Bot
+async def check_membership(bot, user_id):
+
+    channels = [
+        "@YOUR_CHANNEL_1",
+        "@YOUR_CHANNEL_2"
+    ]
+
+    for channel in channels:
+
+        try:
+
+            member = await bot.get_chat_member(
+                chat_id=channel,
+                user_id=user_id
+            )
+
+            if member.status in [
+                "left",
+                "kicked"
+            ]:
+
+                return False
+
+        except Exception:
+
+            return False
+
+    return True
+
+
+# =========================
+# /start
+# =========================
+
+@router.message(F.text == "/start")
+async def start_handler(message: Message):
+
+    await add_user(
+        user_id=message.from_user.id,
+        username=message.from_user.username,
+        full_name=message.from_user.full_name
+    )
+
+    await message.answer(
+        """
+🤖 برای استفاده از Nextel ابتدا در کانال‌های زیر عضو شوید:
+
+📢 کانال 1
+👤 کانال 2
+
+بعد از عضویت روی «✅ تأیید عضویت» بزنید.
+""",
+        reply_markup=join_keyboard()
+    )
+
+
+# =========================
+# تأیید عضویت
+# =========================
+
+@router.callback_query(F.data == "check_membership")
+async def check_membership_handler(
+    callback: CallbackQuery
 ):
 
-    user_id = callback.from_user.id
+    is_member = await check_membership(
+        callback.bot,
+        callback.from_user.id
+    )
 
-    # بررسی دوباره عضویت
-    if not await is_member(bot, user_id):
+    if not is_member:
 
         await callback.answer(
-            "❌ هنوز عضو کانال نشده‌اید.\n"
-            "ابتدا عضو کانال شوید و دوباره روی "
-            "«بررسی عضویت» بزنید.",
+            "❌ هنوز در کانال‌ها عضو نشده‌اید.",
             show_alert=True
         )
 
         return
 
-    # تأیید عضویت
-    await callback.answer(
-        "✅ عضویت شما تأیید شد!"
+    text = """
+🤖 سلام! من Nextel هستم.
+
+من به شما سورس‌های برنامه‌نویسی، قالب سایت و خدمات دیگری ارائه می‌دهم.
+
+ممنون که با من همراه شدید ❤️
+
+لطفاً یکی از دکمه‌های زیر را انتخاب کنید.
+"""
+
+    await callback.message.edit_text(
+        text,
+        reply_markup=main_keyboard()
     )
 
-    # نمایش معرفی Nextel
-    await callback.message.edit_text(
-        WELCOME_TEXT,
-        reply_markup=main_keyboard()
+    await callback.answer(
+        "✅ عضویت شما تأیید شد!"
     )
